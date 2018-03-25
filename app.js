@@ -15,47 +15,44 @@ var oPlayers = {};
 app.use(express.static('www'));
 
 function Player() {
-    this.number1 = (Math.ceil(Math.random() * 9));
-    this.number2 = (Math.ceil(Math.random() * 9));
-    this.nGuesses = 0;
-    this.nCorrect = 0;
+    this.first = (Math.ceil(Math.random() * 5));
+    this.second = (Math.ceil(Math.random() * 5));
+    this.G = 0, this.C = 0;
     this.fWelcoming = function (req, twiml) {
-        twiml.message("Welcome to FlashCard Game. What is " + this.number1 + "+" + this.number2 + "?");
+        twiml.message("Welcome to FlashCard Game. What is " + this.first + "+" + this.second + "?");
         this.fCurstate = this.fGuessing;
     }
     this.fGuessing = function (req, twiml) {
-        if (req.body.Body == this.number1 + this.number2) {
-            this.number1 = (Math.ceil(Math.random() * 10));
-            this.number2 = (Math.ceil(Math.random() * 10));
-            this.nCorrect++;
-            if (this.nCorrect != 5) {
-                twiml.message("Correct. What is " + this.number1 + "+" + this.number2 + "?");
+        if (req.body.Body == this.first + this.second) {
+            this.first = (Math.ceil(Math.random() * 10));
+            this.second = (Math.ceil(Math.random() * 10));
+            this.C++;
+            if (this.C != 10) {
+                twiml.message("Correct. What is " + this.first + "+" + this.second + "?");
             }
-            this.nGuesses = 0;
+            this.G = 0;
         }
-        else if (req.body.Body != this.number1 + this.number2) {
-            this.nGuesses++;
-            if (this.nGuesses == 1) {
-                twiml.message("Incorrect. Try again?");
+        else if (req.body.Body != this.first + this.second) {
+            this.G++;
+            if (this.G == 1) {
+                twiml.message("Wrong. Try again?");
             }
             else {
-                this.number1 = (Math.ceil(Math.random() * 10));
-                this.number2 = (Math.ceil(Math.random() * 10));
-                twiml.message("Incorrect. Whats " + this.number1 + "+" + this.number2 + "?");
-                this.nGuesses = 0;
+                this.first = (Math.ceil(Math.random() * 10));
+                this.second = (Math.ceil(Math.random() * 10));
+                twiml.message("Wrong. Whats " + this.first + "+" + this.second + "?");
+                this.G = 0;
             }
         }
         else {
-            twiml.message("please enter only numbers");
+            twiml.message("please enter only valid numbers");
         }
-
-        if (this.nCorrect == 5) {
-            this.nCorrect = 0;
-            this.number1 = (Math.ceil(Math.random() * 100));
-            this.number2 = (Math.ceil(Math.random() * 100));
-            twiml.message("Correct. What is " + this.number1 + "+" + this.number2 + "?");
+        if (this.C == 10) {
+            this.C = 0;
+            this.first = (Math.ceil(Math.random() * 100));
+            this.second = (Math.ceil(Math.random() * 100));
+            twiml.message("Correct. What is " + this.first + "+" + this.second + "?");
         }
-
     }
     this.fCurstate = this.fWelcoming;
 }
